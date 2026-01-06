@@ -1,87 +1,110 @@
 import { Token, TokenType } from "./ILexer";
 
 
-class Lexer{
+/**
+ * O Lexer é responsável por transformar o código-fonte (string) em uma sequência de Tokens.
+ */
+class Lexer {
 
-    private text : string;
-    private position : number = 0;
+    private text: string;
+    private position: number = 0;
 
-    constructor(text : string){
+    constructor(text: string) {
         this.text = text
     }
 
-    private peek(): string{
+    /**
+     * Retorna o caractere na posição atual sem avançar o ponteiro.
+     */
+    private peek(): string {
         return this.text[this.position] || "";
     }
-    private advance(){
+
+    /**
+     * Avança a posição do ponteiro no texto.
+     */
+    private advance() {
         this.position++;
     }
 
-    public getNextToken():Token {
-        while(this.position < this.text.length){
+    /**
+     * Analisa o texto e retorna o próximo token encontrado.
+     */
+    public getNextToken(): Token {
+        while (this.position < this.text.length) {
             const char = this.peek();
+
+            // Definição de padrões (espaços, números, letras)
             const isBlankSpace = /\s/
             const isNumber = /[0-9]/
             const isWord = /[a-zA-Z]/
 
-            if(isBlankSpace.test(char)){
+            // Ignorar espaços em branco
+            if (isBlankSpace.test(char)) {
                 this.advance();
                 continue;
             }
 
-            if(char === "+"){
+            // Mapeamento de caracteres individuais para seus respectivos tokens
+            if (char === "+") {
                 this.advance();
-                return {type: TokenType.PLUS, value: "+"}
+                return { type: TokenType.PLUS, value: "+" }
             }
-             if(char === "/"){
+            if (char === "/") {
                 this.advance();
-                return {type: TokenType.DIVIDED, value: "/"}
-            }
-
-               if(char === "*"){
-                this.advance();
-                return {type: TokenType.MULT, value: "*"}
+                return { type: TokenType.DIVIDED, value: "/" }
             }
 
-               if(char === "-"){
+            if (char === "*") {
                 this.advance();
-                return {type: TokenType.MINUS, value: "-"}
+                return { type: TokenType.MULT, value: "*" }
             }
 
-             if(char === "="){
+            if (char === "-") {
                 this.advance();
-                return {type: TokenType.ASSIGN, value: "="}
+                return { type: TokenType.MINUS, value: "-" }
             }
 
-             if(char === ";"){
+            if (char === "=") {
                 this.advance();
-                return {type: TokenType.SEMICOLON, value: ";"}
+                return { type: TokenType.ASSIGN, value: "=" }
             }
-            if(isNumber.test(char)){
+
+            if (char === ";") {
+                this.advance();
+                return { type: TokenType.SEMICOLON, value: ";" }
+            }
+
+            // Capturar números (sequência de dígitos)
+            if (isNumber.test(char)) {
                 let num = "";
-                while(isNumber.test(this.peek())){
+                while (isNumber.test(this.peek())) {
                     num += this.peek();
                     this.advance();
                 }
-                return {type: TokenType.NUMBER, value: num}
+                return { type: TokenType.NUMBER, value: num }
             }
 
-            if(isWord.test(char)){
+            // Capturar palavras (identificadores ou palavras reservadas)
+            if (isWord.test(char)) {
                 let word = "";
-                while(isWord.test(this.peek())){
+                while (isWord.test(this.peek())) {
                     word += this.peek();
                     this.advance();
                 }
 
-                if(word === "let") return {type: TokenType.LET,value : word}
-                if(word === "print") return {type: TokenType.PRINT,value : word}
-               
-               return {type: TokenType.IDENTIFIER,value : word} 
+                // Verificar se a palavra é uma palavra-chave reservada
+                if (word === "let") return { type: TokenType.LET, value: word }
+                if (word === "print") return { type: TokenType.PRINT, value: word }
+
+                // Se não for palavra-chave, é um identificador (nome de variável)
+                return { type: TokenType.IDENTIFIER, value: word }
             }
             throw new Error(`Caractere inválido: ${char}`);
         }
 
-        return { type : TokenType.EOF, value:""}
+        // Fim do arquivo atingido
+        return { type: TokenType.EOF, value: "" }
     }
 
 }
