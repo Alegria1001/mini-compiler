@@ -108,20 +108,10 @@ class Lexer {
         };
       }
 
-      if (char === "=") {
-        this.advance();
-        return {
-          type: TokenType.ATRIBUICAO,
-          value: "=",
-          linha: tokenInicioLinha,
-          coluna: tokenInicioColuna,
-        };
-      }
-
       if (char === ".") {
         this.advance();
         return {
-          type: TokenType.SEMICOLON,
+          type: TokenType.PONTO,
           value: ".",
           linha: tokenInicioLinha,
           coluna: tokenInicioColuna,
@@ -171,6 +161,16 @@ class Lexer {
         return {
           type: TokenType.CHAVE_DIREITA,
           value: ")",
+          linha: tokenInicioLinha,
+          coluna: tokenInicioColuna,
+        };
+      }
+
+       if (char === "=") {
+        this.advance();
+        return {
+          type: TokenType.ATRIBUICAO,
+          value: "=",
           linha: tokenInicioLinha,
           coluna: tokenInicioColuna,
         };
