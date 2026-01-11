@@ -34,9 +34,13 @@ aproximar de linguagens modernas e preparar o compilador para
 ## 2. Lexer
 
 ### Alterações
-- Reconhecimento dos novos lexemas definidos no ILexer
+- Reconhecimento dos novos lexemas definidos no ILexer (incluindo TEXTO)
 - Suporte aos delimitadores: ponto e parenteses
-- utilização de virgula para números de ponto flutuante
+- Utilização de vírgula para números de ponto flutuante
+- Melhoria no reconhecimento de identificadores (suporte a números e underscores após a primeira letra, ex: `var1`, `minha_variavel`)
+- Implementação parsing de Strings (aspas duplas) com tratamento de erro para strings não terminadas
+- Formatação de mensagens de erro com cores ANSI e detalhes do arquivo, linha e coluna
+- Exibição do contexto do erro para facilitar o debug
 
 
 

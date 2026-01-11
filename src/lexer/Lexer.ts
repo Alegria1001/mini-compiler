@@ -105,6 +105,37 @@ class Lexer {
                 return { type: TokenType.PARENTES_DIREITO, value: ":", linha: tokenInicioLinha, coluna: tokenInicioColuna };
             }
 
+            if (char === '"') {
+                this.advance(); // Consome aspas iniciais
+                let str = "";
+                const startLine = this.linha;
+                const startColumn = this.coluna;
+
+                while (this.peek() !== '"' && this.position < this.text.length) {
+                    if (this.peek() === '\n') {
+                        this.avancaLinha();
+                    } else {
+                        str += this.peek();
+                        this.advance();
+                    }
+                }
+
+                if (this.peek() === '"') {
+                    this.advance(); // Consome aspas finais
+                    return { type: TokenType.TEXTO, value: str, linha: startLine, coluna: startColumn };
+                } else {
+                    throw new Error(
+                        `\x1b[31m========================================\x1b[0m
+\x1b[31m[ERRO] String não terminada\x1b[0m
+\x1b[31m========================================\x1b[0m
+\x1b[1mDetalhes:\x1b[0m
+  - \x1b[36mArquivo:\x1b[0m \x1b[33m${this.filename}\x1b[0m
+  - \x1b[36mLinha:\x1b[0m \x1b[33m${startLine}\x1b[0m
+  - \x1b[36mColuna:\x1b[0m \x1b[33m${startColumn}\x1b[0m`
+                    );
+                }
+            }
+
             // Capturar números inteiros ou reais(sequência de dígitos)
             if (isNumber.test(char)) {
                 let num = "";
@@ -144,7 +175,8 @@ class Lexer {
             // Capturar palavras (identificadores ou palavras reservadas)
             if (isWord.test(char)) {
                 var word = "";
-                while (isWord.test(this.peek())) {
+                // Permite letras, números e underscore após o primeiro caractere
+                while (/[a-zA-Z0-9_]/.test(this.peek())) {
                     word += this.peek();
                     this.advance();
                 }
@@ -155,6 +187,7 @@ class Lexer {
                 if (word === "INTEIRO") return { type: TokenType.INTEIRO, value: word, linha: tokenInicioLinha, coluna: tokenInicioColuna };
                 if (word === "REAL") return { type: TokenType.REAL, value: word, linha: tokenInicioLinha, coluna: tokenInicioColuna };
                 if (word === "NATURAL") return { type: TokenType.NATURAL, value: word, linha: tokenInicioLinha, coluna: tokenInicioColuna };
+                if (word === "TEXTO") return { type: TokenType.TEXTO, value: word, linha: tokenInicioLinha, coluna: tokenInicioColuna };
 
                 // Se não for palavra-chave, é um identificador (nome de variável)
                 return { type: TokenType.IDENTIFICADOR, value: word, linha: tokenInicioLinha, coluna: tokenInicioColuna };
