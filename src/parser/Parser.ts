@@ -115,49 +115,49 @@ class Parser {
     }
 
     /**
-     * Processa expressões aritméticas respeitando a precedência e associatividade.
-     * Gramática: expr -> factor ((MAIS | MENOS | MULTIPLICACAO | DIVISAO) factor)*
+     * Processa termos (multiplicação e divisão).
+     * Gramática: term -> factor ((MULTIPLICACAO | DIVISAO) factor)*
      */
-    private expr(): ASTNode {
+    private term(): ASTNode {
         var node = this.factor();
 
-        while (this.currentToken.type === TokenType.MAIS) {
-            this.eat(TokenType.MAIS);
+        while (
+            this.currentToken.type === TokenType.MULTIPLICACAO ||
+            this.currentToken.type === TokenType.DIVISAO
+        ) {
+            const operator = this.currentToken.type;
+            this.eat(operator);
+
             node = {
                 type: "BinaryExpression",
-                operator: "+",
+                operator: operator === TokenType.MULTIPLICACAO ? "*" : "/",
                 left: node,
                 right: this.factor(),
             };
         }
 
-        while (this.currentToken.type === TokenType.DIVISAO) {
-            this.eat(TokenType.DIVISAO);
-            node = {
-                type: "BinaryExpression",
-                operator: "/",
-                left: node,
-                right: this.factor(),
-            };
-        }
+        return node;
+    }
 
-        while (this.currentToken.type === TokenType.MULTIPLICACAO) {
-            this.eat(TokenType.MULTIPLICACAO);
-            node = {
-                type: "BinaryExpression",
-                operator: "*",
-                left: node,
-                right: this.factor(),
-            };
-        }
+    /**
+     * Processa expressões aritméticas respeitando a precedência e associatividade.
+     * Gramática: expr -> term ((MAIS | MENOS) term)*
+     */
+    private expr(): ASTNode {
+        var node = this.term();
 
-        while (this.currentToken.type === TokenType.MENOS) {
-            this.eat(TokenType.MENOS);
+        while (
+            this.currentToken.type === TokenType.MAIS ||
+            this.currentToken.type === TokenType.MENOS
+        ) {
+            const operator = this.currentToken.type;
+            this.eat(operator);
+
             node = {
                 type: "BinaryExpression",
-                operator: "-",
+                operator: operator === TokenType.MAIS ? "+" : "-",
                 left: node,
-                right: this.factor(),
+                right: this.term(),
             };
         }
 
