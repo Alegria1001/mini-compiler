@@ -55,6 +55,15 @@ class Parser {
       };
     }
 
+    if(token.type === TokenType.TEXTO){
+      this.eat(TokenType.TEXTO);
+      return {
+        type: "StringLiteral",
+        value: token.value,
+      };
+
+    }
+
     if (token.type === TokenType.IDENTIFICADOR) {
       this.eat(TokenType.IDENTIFICADOR);
       return { type: "IDENTIFICADOR", name: token.value };
@@ -136,11 +145,12 @@ class Parser {
       if (
         varType.type === TokenType.INTEIRO ||
         varType.type === TokenType.REAL ||
-        varType.type === TokenType.NATURAL
+        varType.type === TokenType.NATURAL ||
+        varType.type === TokenType.TEXTO
       ) {
         this.eat(varType.type);
       } else {
-        throw new Error("Tipo de variável inválido");
+        throw new Error(`Tipo de variável inválido: ${varType.value}`);
       }
 
       this.eat(TokenType.SEMICOLON);
@@ -166,7 +176,7 @@ class Parser {
         value,
       };
     }
-    throw new Error(`Comando inválido`);
+    throw new Error(`Comando inválido: ${this.currentToken.value}`);
   }
 
   /**

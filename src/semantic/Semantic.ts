@@ -31,26 +31,39 @@ class SemanticAnalyzer {
         const value = this.visit(node.value);
 
         // Validação de tipo
-        if (node.varType === "INTEIRO" && !Number.isInteger(value)) {
-          
-          throw new Error(
-            `Erro semântico: valor ${value} não é compatível com tipo INTEIRO da variável ${node.id}`
-          );
+        switch (node.varType) {
+          case "INTEIRO":
+            if (!Number.isInteger(value)) {
+              throw new Error(
+                `Erro semântico: valor ${value} não é compatível com tipo INTEIRO`
+              );
+            }
+            break;
+          case "REAL":
+            if (typeof value !== "number") {
+              throw new Error(
+                `Erro semântico: valor ${value} não é compatível com tipo REAL`
+              );
+            }
+            break;
+          case "NATURAL":
+            if (!Number.isInteger(value) || value < 0) {
+              throw new Error(
+                `Erro semântico: valor ${value} não é compatível com tipo NATURAL`
+              );
+            }
+            break;
+          case "TEXTO":
+            if (typeof value !== "string") {
+              throw new Error(
+                `Erro semântico: valor ${value} não é compatível com tipo TEXTO`
+              );
+            }
+            break;
         }
 
-        if (
-          node.varType === "NATURAL" &&
-          (!Number.isInteger(value) || value < 0)
-        ) {
-          throw new Error(
-            `Erro semântico: valor ${value} não é compatível com tipo NATURAL da variável ${node.id}`
-          );
-        }
-
-        // REAL aceita qualquer número
         this.simbols[node.id] = { value, type: node.varType };
         break;
-
       // Comando print
       case "PrintStatement":
         console.log(this.visit(node.value));
@@ -70,6 +83,10 @@ class SemanticAnalyzer {
             throw new Error(`Operador unário desconhecido: ${node.operator}`);
         }
 
+      // Texto literal
+      case "StringLiteral":
+        return node.value;
+
       // Identificador
       case "IDENTIFICADOR":
         const symbol = this.simbols[node.name];
@@ -85,6 +102,14 @@ class SemanticAnalyzer {
         const left = this.visit(node.left);
         const right = this.visit(node.right);
 
+        // Validação de tipos: ambos devem ser números
+        if (typeof left !== "number" || typeof right !== "number") {
+          throw new Error(
+            `Erro semântico: operação '${
+              node.operator
+            }' inválida entre tipos ${typeof left} e ${typeof right}`
+          );
+        }
         // Checar divisão por zero
         if (node.operator === "/" && right === 0) {
           throw new Error(

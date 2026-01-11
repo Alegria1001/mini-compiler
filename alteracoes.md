@@ -39,6 +39,7 @@ aproximar de linguagens modernas e preparar o compilador para
 - Suporte aos delimitadores: ponto e parenteses
 - Utilização de vírgula para números de ponto flutuante
 - Reconhecimento do lexema Menos(-) para numeros negativos definidos no Ilexter
+- Reconhecimento do lexema "TEXTO" para textos defino no ILexer
 - Melhoria no reconhecimento de identificadores (suporte a números e underscores após a primeira letra, ex: `var1`, `minha_variavel`)
 - Implementação parsing de Strings (aspas duplas) com tratamento de erro para strings não terminadas
 - Formatação de mensagens de erro com cores ANSI e detalhes do arquivo, linha e coluna
@@ -54,6 +55,26 @@ aproximar de linguagens modernas e preparar o compilador para
 ## 3. Parser
 
 ### Alterações na Sintaxe
+- Adiconada validação de tipos de de dados para:
+    1. NATURAL não pode ser negativo
+    2. TEXTO dêve estar entre aspas duplas
+
+
+### Exemplos:
+
+Entrada:
+```
+VAR nome = "Ana Luisa" : TEXTO.
+EXIBIR(nome).
+```
+Sáida do prompt:
+
+```
+Ana luisa
+```
+
+
+
 
 #### Antes:
 
