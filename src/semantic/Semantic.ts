@@ -1,8 +1,8 @@
 import ASTNode from "../parser/IParser";
 
 interface Symbol {
-  value: number;
-  type: "INTEIRO" | "REAL" | "NATURAL";
+  value: number | string | boolean;
+  type: "INTEIRO" | "REAL" | "NATURAL" | "TEXTO" | "LOGICO";
 }
 
 /**
@@ -59,6 +59,12 @@ class SemanticAnalyzer {
                 `Erro semântico: valor ${value} não é compatível com tipo TEXTO`
               );
             }
+          case "LOGICO":
+            if (typeof value !== "boolean") {
+              throw new Error(
+                `Erro semântico: valor ${value} não é compatível com tipo LOGICO`
+              );
+            }
             break;
         }
 
@@ -85,6 +91,10 @@ class SemanticAnalyzer {
 
       // Texto literal
       case "StringLiteral":
+        return node.value;
+
+      // Valor lógico
+      case "BooleanLiteral":
         return node.value;
 
       // Identificador

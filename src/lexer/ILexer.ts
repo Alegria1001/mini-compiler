@@ -19,9 +19,13 @@ enum TokenType {
     NATURAL = "NATURAL", // Tipo de dado natural (não negativo)
     REAL = "REAL", // Tipo de dado real (semicolon flutuante)
     TEXTO = "TEXTO", // Tipo de dado texto (string)
+    
     CARACTER = "CARACTER", // Tipo de dado caracter (char)
-    BOOLEANO = "BOOLEANO", // Tipo de dado booleano (verdadeiro/falso)
+
+    // lOGICOS
     LOGICO = "LOGICO", // Tipo de dado lógico (verdadeiro/falso)
+    VERDADEIRO = "VERDADEIRO", // Literal lógico verdadeiro
+    FALSO = "FALSO", // Literal lógico falso
 
     // Delimitadores
     PARENTES_ESQUERDO = "PARENTES_ESQUERDO", // Parênteses esquerdo '('

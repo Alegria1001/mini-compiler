@@ -55,13 +55,32 @@ class Parser {
       };
     }
 
-    if(token.type === TokenType.TEXTO){
+    if (token.type === TokenType.TEXTO) {
       this.eat(TokenType.TEXTO);
       return {
         type: "StringLiteral",
         value: token.value,
       };
+    }
 
+
+    // Valores lógicos
+    //  if (token.type === TokenType.LOGICO) {
+    //   this.eat(TokenType.LOGICO);
+    //   return {
+    //     type: "StringLiteral",
+    //     value: token.value,
+    //   };
+    // }
+
+
+     // Valores booleanos
+    if (token.type === TokenType.VERDADEIRO || token.type === TokenType.FALSO) {
+      this.eat(token.type);
+      return {
+        type: "BooleanLiteral",
+        value: token.type === TokenType.VERDADEIRO, // true se VERDADEIRO, false se FALSO
+      };
     }
 
     if (token.type === TokenType.IDENTIFICADOR) {
@@ -146,7 +165,8 @@ class Parser {
         varType.type === TokenType.INTEIRO ||
         varType.type === TokenType.REAL ||
         varType.type === TokenType.NATURAL ||
-        varType.type === TokenType.TEXTO
+        varType.type === TokenType.TEXTO ||
+        varType.type === TokenType.LOGICO
       ) {
         this.eat(varType.type);
       } else {
