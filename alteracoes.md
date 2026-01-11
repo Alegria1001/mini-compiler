@@ -65,6 +65,18 @@ aproximar de linguagens modernas e preparar o compilador para
     2. **TEXTO** deve receber string entre aspas duplas (`"..."`)
     3. **LOGICO** deve receber apenas `VERDADEIRO` ou `FALSO`
 
+### Correção de Precedência de Operadores
+- **Problema corrigido:** Expressões como `2 + 3 * 4` eram avaliadas incorretamente como `20` (esquerda para direita)
+- **Solução implementada:** Gramática reestruturada em dois níveis:
+  - `expr -> term ((+ | -) term)*` - Adição e subtração (menor precedência)
+  - `term -> factor ((* | /) factor)*` - Multiplicação e divisão (maior precedência)
+- **Resultado:** `2 + 3 * 4` agora retorna corretamente `14` ✅
+
+### Suporte a Parênteses
+- Implementado reconhecimento de expressões entre parênteses no método `factor()`
+- Gramática estendida: `factor -> ... | (expr)`
+- Permite alterar ordem de avaliação: `(2 + 3) * 4` = `20` ✅
+
 ### Melhorias de Mensagens de Erro
 - **Formatação Rica de Erros:** O Parser agora exibe erros formatados com cores ANSI, incluindo:
   - Arquivo, Linha e Coluna do erro

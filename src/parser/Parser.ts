@@ -101,6 +101,14 @@ class Parser {
             };
         }
 
+        // Caso: expressão entre parênteses
+        if (token.type === TokenType.PARENTES_ESQUERDO) {
+            this.eat(TokenType.PARENTES_ESQUERDO);
+            const node = this.expr(); // avalia a expressão interna
+            this.eat(TokenType.PARENTES_DIREITO);
+            return node;
+        }
+
         if (token.type === TokenType.IDENTIFICADOR) {
             this.eat(TokenType.IDENTIFICADOR);
             return { type: "IDENTIFICADOR", name: token.value };

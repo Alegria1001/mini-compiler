@@ -14,5 +14,7 @@ Atualmente não há problemas conhecidos em aberto. Todos os problemas listados 
 ### Parser
 - [x] **Validações de Tipo:** Implementadas verificações sintáticas para TEXTO, LOGICO e NATURAL.
 - [x] **Formatação de Erros:** Mensagens de erro agora incluem cores ANSI, arquivo, linha, coluna e contexto detalhado.
+- [x] **Precedência de Operadores:** Corrigida a ordem de avaliação (`*` e `/` antes de `+` e `-`).
+- [x] **Suporte a Parênteses:** Implementado reconhecimento de expressões entre parênteses para controle de precedência.
 
 ```
