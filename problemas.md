@@ -24,13 +24,13 @@ Atualmente não há problemas conhecidos em aberto. Todos os problemas listados 
 
 - [x] **Suporte a Parênteses:** Implementado reconhecimento de expressões entre parênteses para controle de precedência.
 
-- [ ] **Number Literal:** Mudar a mensagem de Number literal para Numero literal ao mostrar o erro.
+- [x] **Number Literal:** Mudar a mensagem de Number literal para Numero literal ao mostrar o erro.
 
-- [ ] **Ponto no final da linha:** Deve se formatar uma mensagem específica para informar que faltou o ponto final da linha, quando necessario.
+- [x] **Ponto no final da linha:** Deve se formatar uma mensagem específica para informar que faltou o ponto final da linha, quando necessario.
 
-- [ ] **Tipo de variavel não declarado:** Mostrar uma mensagem específica para informar que o tipo de variavel não foi declarado.
+- [x] **Tipo de variavel não declarado:** Mostrar uma mensagem específica para informar que o tipo de variavel não foi declarado.
 
-- [ ] **Possiblidade de meter varios códigos:** Adicionar varios códigos fonte na pasta input para poder executar, principalmente em testes
+- [x] **Possiblidade de meter varios códigos:** Adicionar varios códigos fonte na pasta input para poder executar, principalmente em testes.
 
 - [ ] **Operador sem operando:** VAR x = 10 + ; [ERRO] Operador '+' sem operando à direita
 

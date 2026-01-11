@@ -57,6 +57,12 @@ aproximar de linguagens modernas e preparar o compilador para
     - Erro ao iniciar com palavras reservadas seguidas de outros caracteres (ex: `VARc`, `REALx`).
 - **Validação de Números:**
     - Erro caso o número termine com vírgula ou ponto (ex: `12,`).
+    - **Atenção:** Uso de ponto (`.`) em números reais agora gera um erro instrutivo solicitando o uso de vírgula (`,`).
+    - **Limite de Tamanho:** Implementada validação para números que excedem 15 dígitos.
+- **Validação de Strings:**
+    - **Limite de Tamanho:** Strings agora possuem limite máximo de 500 caracteres.
+- **Comentários de Bloco:**
+    - Adicionada detecção de erro para comentários iniciados com `/*` que não foram fechados com `*/`.
 
 
 
@@ -93,6 +99,11 @@ Verificação de tipo: Se a condição não for booleana, o Parser lança erro s
   - Contexto detalhado com informações sobre o problema
   - Sugestões de valores/tipos válidos
   - Mesma qualidade visual dos erros do Lexer
+- **Localização de Nomes Internos:** Nomes de tipos da AST (como `NumberLiteral`) são traduzidos para nomes amigáveis em português (`Numero literal`) nas mensagens de erro.
+- **Dicas de Sintaxe Específicas:**
+  - Erro customizado para falta de ponto final (`.`) ao fim da linha.
+  - Erro customizado para declaração de variável sem tipo ou com tipo inválido.
+- **Correção de Terminologia:** Alterado o termo "Factor Inválido" para "Fator Inválido" para manter a padronização no idioma.
 
 
 
