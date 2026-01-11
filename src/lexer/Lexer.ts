@@ -43,7 +43,7 @@ class Lexer {
         continue;
       }
 
-      // Mapeamento de caracteres indivisaouais para seus respectivos tokens
+      // Mapeamento de caracteres indivuduais para seus respectivos tokens
       if (char === "+") {
         this.advance();
         return { type: TokenType.MAIS, value: "+" };
@@ -76,6 +76,15 @@ class Lexer {
       if (char === ":") {
         this.advance();
         return { type: TokenType.DOIS_PONTOS, value: ":" };
+      }
+
+      if (char === "(") {
+        this.advance();
+        return { type: TokenType.PARENTES_ESESQUERDO, value: ":" };
+      }
+      if (char === ")") {
+        this.advance();
+        return { type: TokenType.PARENTES_DIREITO, value: ":" };
       }
 
       // Capturar números inteiros ou reais(sequência de dígitos)

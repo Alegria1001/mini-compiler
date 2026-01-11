@@ -25,7 +25,7 @@ enum TokenType {
   
   // Delimitadores
   PARENTES_ESESQUERDO = "PARENTES_ESESQUERDO", // Parênteses esquerdo '('
-  PARENTES_EDIREITO = "PARENTES_EDIREITO", // Parênteses direito ')'
+  PARENTES_DIREITO = "PARENTES_DIREITO", // Parênteses direito ')'
   COLCHETE_ESQUERDO = "COLCCOLCHETE_ESQUERDOHETESQUERDO", // Colchete esquerdo '['
   COLCHETE_DIREITO = "COLCHETE_DIREITO", // Colchete direito ']'
   CHAVE_ESQUERDO = "CHAVE_ESQUERDO", // Chave esquerda '{'
