@@ -4,6 +4,7 @@ interface Symbol {
   name: string;
   value: number | string | boolean;
   type: "INTEIRO" | "REAL" | "NATURAL" | "TEXTO" | "LOGICO" | "any";
+  // scope: "global" | "local";
   
 }
 
@@ -154,7 +155,6 @@ class SemanticAnalyzer {
       // Valor lógico
       case "BooleanLiteral":
         return node.value;
-
 
         //Escopo
         case "Block":
