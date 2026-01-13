@@ -56,7 +56,7 @@ mini-compiler/
 │   ├── lexer/        # Analisador Léxico
 │   ├── parser/       # Analisador Sintático
 │   ├── semantic/     # Analisador Semântico
-│   └── index.ts      # PONTO de entrada
+│   └── index.ts      # SEMICOLON de entrada
 │
 ├── package.json
 ├── tsconfig.json
