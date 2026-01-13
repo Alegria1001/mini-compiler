@@ -51,7 +51,7 @@ class SemanticAnalyzer {
         this.stackScopes.push(new Scope());
     }
     //Sair do escopo actual
-    private outEscope(){
+    private outScope(){
         this.stackScopes.pop();
     }
 
@@ -155,7 +155,7 @@ class SemanticAnalyzer {
       case "BooleanLiteral":
         return node.value;
 
-<<<<<<< HEAD
+
         //Escopo
         case "Block":
             this.enterScope();
@@ -163,10 +163,9 @@ class SemanticAnalyzer {
             for(const dec of node.declaration){
                 this.visit(dec);
             }
-            this.outEscope();
+            this.outScope();
             break;
-=======
-      //
+      //Booleano
 
       case "IfStatement": {
         const cond = this.visit(node.condition);
@@ -202,7 +201,6 @@ class SemanticAnalyzer {
 
             
         }
->>>>>>> bde25036f97d4240460367ad58c5429fbdc1fad3
 
       // Identificador
       case "IDENTIFICADOR":
