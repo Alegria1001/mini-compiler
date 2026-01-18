@@ -35,11 +35,18 @@ enum TokenType {
   SE = "SE", // Palavra-chave 'SE'
   SENAO = "SENAO", // Palavra-chave 'SENAO'
 
+
+  // Estrutura de repetição
+  ENQUANTO = "ENQUANTO", // Palavra-chave 'ENQUANTO'
+  FACA = "FACA", // Palavra-chave 'FACA'
+  PARA = "PARA", // Palavra-chave 'PARA'
+  
+
   // Delimitadores
   PARENTESE_ESQUERDO = "PARENTE_ESQUERDO", // Parênteses esquerdo '('
   PARENTESE_DIREITO = "PARENTE_DIREITO", // Parênteses direito ')'
-  COLCHETE_ESQUERDA = "COLCHETE_ESQUERDO", // Colchete esquerdo '['
-  COLCHETE_DIREITA = "COLCHETE_DIREITO", // Colchete direito ']'
+  COLCHETE_ESQUERDO = "COLCHETE_ESQUERDO", // Colchete esquerdo '['
+  COLCHETE_DIREITO = "COLCHETE_DIREITO", // Colchete direito ']'
   CHAVE_ESQUERDA = "CHAVE_ESQUERDA", // Chave esquerda '{'
   CHAVE_DIREITA = "CHAVE_DIREITA", // Chave direita '}'
   VIRGULA = "VIRGULA", // Vírgula ','
