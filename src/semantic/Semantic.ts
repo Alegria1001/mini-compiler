@@ -224,27 +224,28 @@ class SemanticAnalyzer {
       case "PrintStatement": {
         let output = "";
 
-        // Caso exista texto
-        if (node.promptMessage !== null) {
-          output += node.promptMessage;
-        }
+        for (const arg of node.arguments) {
+          const value = this.visit(arg);
 
-        // Caso exista identificador
-        if (node.value !== null) {
-          const value = this.visit({
-            type: "IDENTIFICADOR",
-            name: node.value,
-            linha: node.linha ?? 0,
-            coluna: node.coluna ?? 0,
-          });
+          if (
+            typeof value !== "string" &&
+            typeof value !== "number" &&
+            typeof value !== "boolean"
+          ) {
+            throw new Error(
+              this.formatError(
+                "Erro de Tipo",
+                "EXIBIR aceita apenas TEXTO, NUMERO ou LOGICO",
+                node,
+              ),
+            );
+          }
 
-          // Se houver texto antes, adiciona separação
-          if (output.length > 0) output += " ";
-
+          // Formatação: REAL com vírgula
           if (typeof value === "number" && !Number.isInteger(value)) {
             output += value.toString().replace(".", ",");
           } else {
-            output += value;
+            output += value.toString();
           }
         }
 

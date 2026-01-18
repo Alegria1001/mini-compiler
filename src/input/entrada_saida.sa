@@ -5,8 +5,8 @@ INSERIR("Digite o seu nome:", nome).
 EXIBIR("Bem-vindo:",nome).
 
 VAR idade : INTEIRO.
-INSERIR("Qual a sua idade?", idade).
-#EXIBIR("Sua idade é:",idade).
+INSERIR("Qual a sua idade: ", idade).
+EXIBIR("Sua idade é: ",idade, " anos ", nome).
 
 
 VAR preco : REAL.

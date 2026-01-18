@@ -102,6 +102,9 @@ verificação de tipos.
     Sintaxe: INSERIR("TEXTO",IDENTIFICADOR).
 
 
+### Evoluindo comando de saida de dados EXIBIR
+- 1. Comando EXIBIR simples(Apenas TEXTO)
+ 2. Comando EXIBIR mais complexo(TEXTO e IDENTIFICADOR) 
 
 ### Correção de Precedência de Operadores
 
@@ -155,6 +158,8 @@ VAR a:INTEIRO.
 INSERIR(a)
 ```
 
+*****
+
 
 ### Semantic
 
@@ -172,6 +177,18 @@ Sáida do prompt:
 ```
 Ana luisa
 ```
+
+ENTRADA
+```
+VAR idade : INTEIRO.
+INSERIR("digite a sua idade:").
+EXIBIR("A sua idade é:").
+```
+
+SAIDA
+```
+A sua idade é: idade
+
 
 ---
 

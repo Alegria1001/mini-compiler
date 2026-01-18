@@ -357,66 +357,53 @@ class Parser {
     };
   }
 
-private parsePrintStatement(): ASTNode {
-  const exibirToken = this.currentToken;
+  private parsePrintStatement(): ASTNode {
+    const exibirToken = this.currentToken;
+    this.eat(TokenType.EXIBIR);
+    this.eat(TokenType.PARENTESE_ESQUERDO);
 
-  this.eat(TokenType.EXIBIR);
-  this.eat(TokenType.PARENTESE_ESQUERDO);
+    const args: ASTNode[] = [];
 
-  let promptMessage: string | null = null;
-  let value: string | null = null;
+    // Pelo menos um argumento
+    args.push(this.parsePrintArgument());
 
-  // EXIBIR("texto") OU EXIBIR("texto", id)
-  if (this.currentToken.type === TokenType.TEXTO) {
-    promptMessage = this.currentToken.value;
-    this.eat(TokenType.TEXTO);
-
-    // Caso exista vírgula → EXIBIR("texto", id)
-    if (this.currentToken.type as TokenType === TokenType.VIRGULA) {
+    // Zero ou mais , argumento
+    while (this.currentToken.type === TokenType.VIRGULA) {
       this.eat(TokenType.VIRGULA);
-
-      if (this.currentToken.type as TokenType !== TokenType.IDENTIFICADOR) {
-        throw new Error(
-          this.formatError(
-            "Erro Sintático",
-            "Esperado IDENTIFICADOR após a vírgula em EXIBIR",
-          ),
-        );
-      }
-
-      value = this.currentToken.value;
-      this.eat(TokenType.IDENTIFICADOR);
+      args.push(this.parsePrintArgument());
     }
+
+    this.eat(TokenType.PARENTESE_DIREITO);
+    this.eat(TokenType.PONTO);
+
+    return {
+      type: "PrintStatement",
+      arguments: args,
+      linha: exibirToken.linha,
+      coluna: exibirToken.coluna,
+    };
   }
+  private parsePrintArgument(): ASTNode {
+    if (this.currentToken.type === TokenType.TEXTO) {
+      const value = this.currentToken.value;
+      this.eat(TokenType.TEXTO);
+      return { type: "StringLiteral", value };
+    }
 
-  // EXIBIR(id)
-  else if (this.currentToken.type === TokenType.IDENTIFICADOR) {
-    value = this.currentToken.value;
-    this.eat(TokenType.IDENTIFICADOR);
+    if (this.currentToken.type === TokenType.IDENTIFICADOR) {
+      const name = this.currentToken.value;
+      this.eat(TokenType.IDENTIFICADOR);
+      return {
+        type: "IDENTIFICADOR",
+        name,
+        linha: this.currentToken.linha,
+        coluna: this.currentToken.coluna,
+      };
+    }
+
+    // opcional: permitir expressões
+    return this.expr();
   }
-
-  // ERRO
-  else {
-    throw new Error(
-      this.formatError(
-        "Erro Sintático",
-        "Esperado TEXTO ou IDENTIFICADOR em EXIBIR(...)",
-      ),
-    );
-  }
-
-  this.eat(TokenType.PARENTESE_DIREITO);
-  this.eat(TokenType.PONTO);
-
-  return {
-    type: "PrintStatement",
-    value,              // null se não houver
-    promptMessage,   // null se não houver
-    linha: exibirToken.linha,
-    coluna: exibirToken.coluna,
-  };
-}
-
 
   private seStatement(): ASTNode {
     // Consome o 'SE'
