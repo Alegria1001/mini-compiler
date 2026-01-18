@@ -222,7 +222,12 @@ class SemanticAnalyzer {
 
       // Comando print para saida de
       case "PrintStatement":
-        console.log(this.visit(node.value));
+        const printVal = this.visit(node.value);
+        if (typeof printVal === "number" && !Number.isInteger(printVal)) {
+          console.log(printVal.toString().replace(".", ","));
+        } else {
+          console.log(printVal);
+        }
         break;
 
       case "InputStatement": {
@@ -255,6 +260,15 @@ class SemanticAnalyzer {
 
         switch (symbol.type) {
           case "INTEIRO": {
+            if (!/^-?\d+$/.test(input)) {
+              throw new Error(
+                this.formatError(
+                  "Entrada inválida",
+                  `Esperado INTEIRO (apenas números), recebido '${input}'`,
+                  node,
+                ),
+              );
+            }
             const v = parseInt(input, 10);
             if (Number.isNaN(v)) {
               throw new Error(
@@ -270,6 +284,15 @@ class SemanticAnalyzer {
           }
 
           case "REAL": {
+            if (!/^-?\d+(,\d+)?$/.test(input)) {
+              throw new Error(
+                this.formatError(
+                  "Entrada inválida",
+                  `Esperado REAL (use vírgula, ex: 10,5), recebido '${input}'`,
+                  node,
+                ),
+              );
+            }
             const v = parseFloat(input.replace(",", "."));
             if (Number.isNaN(v)) {
               throw new Error(

@@ -75,7 +75,7 @@ class Lexer {
             // Definição de padrões (espaços, números, varras)
             const isBlankSpace = /\s/;
             const isNumber = /[0-9]/;
-            const isWord = /[a-zA-ZáàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ]/;
+            const isWord = /[a-zA-Z]/;
 
             // Ignorar espaços em branco
             if (isBlankSpace.test(char)) {
@@ -484,7 +484,7 @@ class Lexer {
             if (isWord.test(char)) {
                 var word = "";
                 // Permite letras (incluindo acentos), números e underscore após o primeiro caractere
-                while (/[a-zA-Z0-9_áàâãéèêíïóôõöúçÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇ]/.test(this.peek())) {
+                while (/[a-zA-Z0-9_]/.test(this.peek())) {
                     word += this.peek();
                     this.advance();
                 }

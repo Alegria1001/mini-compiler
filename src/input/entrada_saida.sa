@@ -3,6 +3,7 @@
 VAR nome : TEXTO.
 INSERIR("Digite o seu nome:", nome).
 EXIBIR("Bem-vindo,").
+EXIBIR(nome).
 
 VAR idade : INTEIRO.
 INSERIR("Qual a sua idade?", idade).
