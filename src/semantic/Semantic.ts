@@ -345,6 +345,52 @@ class SemanticAnalyzer {
         break;
       }
 
+      //
+      case "WhileStatement": {
+        let iterations = 0;
+        const MAX_ITERATIONS = 10000;
+
+        while (this.visit(node.condition)) {
+          // body sempre é um array no seu parser, então não precisa do else
+          for (const stmt of node.body) {
+            this.visit(stmt);
+          }
+
+          iterations++;
+          if (iterations > MAX_ITERATIONS)
+            throw new Error("Loop ENQUANTO excedeu 10000 iterações.");
+        }
+        break;
+      }
+
+      case "ForStatement": {
+        const cond = this.visit(node.condition);
+        let iterations = 0;
+        const MAX_ITERATIONS = 10000;
+        this.visit(node.init);
+        iterations = 0;
+        while (this.visit(node.condition)) {
+          node.body.forEach((stmt: ASTNode) => this.visit(stmt));
+          this.visit(node.increment);
+          iterations++;
+          if (iterations > MAX_ITERATIONS)
+            throw new Error("Loop PARA excedeu 10000 iterações.");
+        }
+        break;
+      }
+
+      case "DoWhileStatement": {
+        let iterations = 0;
+        const MAX_ITERATIONS = 10000;
+        do {
+          node.body.forEach((stmt: ASTNode) => this.visit(stmt));
+          iterations++;
+          if (iterations > MAX_ITERATIONS)
+            throw new Error("Loop FACA...ENQUANTO excedeu 10000 iterações.");
+        } while (this.visit(node.condition));
+        break;
+      }
+
       // Valor literal
       case "NumberLiteral":
         return node.value;

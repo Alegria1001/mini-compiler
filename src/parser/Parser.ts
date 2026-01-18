@@ -338,15 +338,17 @@ class Parser {
     };
   }
 
-  private parseAssignment(): ASTNode {
+  private parseAssignment(expectDot: boolean = true): ASTNode {
     const idToken = this.currentToken;
     const varName = idToken.value;
     this.eat(TokenType.IDENTIFICADOR);
 
     this.eat(TokenType.ATRIBUICAO); // consome '='
-    const value = this.expr(); // avalia expressão do lado direito
+    const value = this.expr();
 
-    this.eat(TokenType.PONTO); // termina com ponto final
+    if (expectDot) {
+      this.eat(TokenType.PONTO); // só consome ponto se necessário
+    }
 
     return {
       type: "Assignment",
@@ -514,6 +516,115 @@ class Parser {
     };
   }
 
+  // Estrutura de repetição ENQUANTO
+  private parseWhileStatement(): ASTNode {
+    const enquantoToken = this.currentToken;
+    this.eat(TokenType.ENQUANTO);
+    this.eat(TokenType.PARENTESE_ESQUERDO);
+    const condition = this.logicalExpr();
+
+    this.eat(TokenType.PARENTESE_DIREITO);
+    this.eat(TokenType.CHAVE_ESQUERDA);
+    const body = this.parseBlock(TokenType.CHAVE_DIREITA);
+    this.eat(TokenType.CHAVE_DIREITA);
+
+    return {
+      type: "WhileStatement",
+      condition,
+      body,
+      linha: enquantoToken.linha,
+      coluna: enquantoToken.coluna,
+    };
+  }
+  // Estrutura de repetição PARA
+  private parseForStatement(): ASTNode {
+    const paraToken = this.currentToken;
+    this.eat(TokenType.PARA);
+    this.eat(TokenType.PARENTESE_ESQUERDO);
+
+    // Inicialização (VAR ... ou atribuição)
+    let init: ASTNode;
+    if (this.currentToken.type === TokenType.VAR) {
+      // Se declarar uma variável com VAR, consome o ponto final normalmente
+      init = this.parseVariableDeclaration();
+    } else if (this.currentToken.type === TokenType.IDENTIFICADOR) {
+      // Se for só atribuição dentro do FOR, não consome ponto
+      init = this.parseAssignment(false);
+    } else {
+      throw new Error(
+        this.formatError("Erro Sintático", "Esperado inicialização do FOR"),
+      );
+    }
+
+    // Condição
+    this.eat(TokenType.PONTO_E_VIRGULA); // separador
+    const condition = this.logicalExpr();
+
+    // Incremento
+    this.eat(TokenType.PONTO_E_VIRGULA); // separador
+    let increment: ASTNode;
+    if (this.currentToken.type === TokenType.IDENTIFICADOR) {
+      // Também não consome ponto no incremento
+      increment = this.parseAssignment(false);
+    } else {
+      throw new Error(
+        this.formatError("Erro Sintático", "Esperado incremento do FOR"),
+      );
+    }
+
+    this.eat(TokenType.PARENTESE_DIREITO);
+
+    // Corpo do loop
+    this.eat(TokenType.CHAVE_ESQUERDA);
+    const body = this.parseBlock(TokenType.CHAVE_DIREITA);
+    this.eat(TokenType.CHAVE_DIREITA);
+
+    return {
+      type: "ForStatement",
+      init,
+      condition,
+      increment,
+      body,
+      linha: paraToken.linha,
+      coluna: paraToken.coluna,
+    };
+  }
+
+  // Estrutura de repetição FACA...ENQUANTO (a implementar)
+  private parseDoWhileStatement(): ASTNode {
+    const facaToken = this.currentToken;
+    this.eat(TokenType.FACA);
+
+    // Bloco do FACA
+    this.eat(TokenType.CHAVE_ESQUERDA);
+    const body = this.parseBlock(TokenType.CHAVE_DIREITA);
+    this.eat(TokenType.CHAVE_DIREITA); // consome o '}'
+
+    // Após o bloco, o próximo token deve ser ENQUANTO
+    if (this.currentToken.type !== TokenType.ENQUANTO) {
+      throw new Error(
+        this.formatError(
+          "Erro Sintático",
+          "Esperado ENQUANTO após o bloco de FACA",
+        ),
+      );
+    }
+    this.eat(TokenType.ENQUANTO);
+
+    this.eat(TokenType.PARENTESE_ESQUERDO);
+    const condition = this.logicalExpr();
+    this.eat(TokenType.PARENTESE_DIREITO);
+    this.eat(TokenType.PONTO);
+
+    return {
+      type: "DoWhileStatement",
+      body,
+      condition,
+      linha: facaToken.linha,
+      coluna: facaToken.coluna,
+    };
+  }
+
   private statement(): ASTNode {
     switch (this.currentToken.type) {
       case TokenType.VAR:
@@ -536,6 +647,14 @@ class Parser {
 
       case TokenType.INSERIR:
         return this.parseInputStatement();
+
+      case TokenType.ENQUANTO:
+        return this.parseWhileStatement();
+
+      case TokenType.PARA:
+        return this.parseForStatement();
+      case TokenType.FACA:
+        return this.parseDoWhileStatement();
       default:
         throw new Error(
           this.formatError(
