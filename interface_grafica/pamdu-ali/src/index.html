@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pamdu-Ali | IDE</title>
+    <link rel="stylesheet" href="index.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="logo-area">
+            <h1>Pamdu-Ali</h1>
+            <span class="badge">v1.0.0</span>
+        </div>
+        <p>Compilador da linguagem <code>SeteAO.sa</code></p>
+    </header>
+
+    <main class="editor-container">
+        <section class="panel editor-panel">
+            <div class="panel-header toolbar-header">
+                <div class="toolbar-left">
+                    <button id="abrir-arquivo" class="btn-icon" title="Abrir Arquivo (Ctrl+O)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M4 6C4 4.89543 4.89543 4 6 4H10L12 6H18C19.1046 6 20 6.89543 20 8V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button id="salvar-arquivo" class="btn-icon" title="Salvar (Ctrl+S)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M19 21H5C4.44772 21 4 20.5523 4 20V4C4 3.44772 4.44772 3 5 3H16L20 7V20C20 20.5523 19.5523 21 19 21Z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M17 21V13H7V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button id="salvar-como" class="btn-icon" title="Salvar Como...">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.2 2.6L18.8 6.2L15.2 2.6ZM12.8 5L4.5 13.3V16.9H8.1L16.4 8.6L12.8 5Z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M14 20H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="divider"></div>
+                    <button id="compilar" class="btn-icon btn-run" title="Executar (F5)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 3L19 12L5 21V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="toolbar-right">
+                    <span class="status-dot"></span>
+                    <span class="panel-title">Editor</span>
+                </div>
+            </div>
+
+            <div class="editor-wrapper">
+                <div id="line-numbers" class="line-numbers"></div>
+                <div class="code-area">
+                    <div id="error-overlay" aria-hidden="true"></div>
+                    <pre id="highlighting" aria-hidden="true"><code id="highlighting-content"></code></pre>
+                    <textarea id="codigo" spellcheck="false" oninput="updateHighlight(this.value)"
+                        onscroll="syncScroll(this)">VAR nome = "Pamdu-Ali" : TEXTO.
+EXIBIR(nome).</textarea>
+                </div>
+            </div>
+
+            <div class="editor-footer">
+                <span id="cursor-position">Ln 1, Col 1</span>
+            </div>
+        </section>
+
+        <section class="panel output-panel">
+            <div class="panel-header">Console</div>
+            <div class="terminal">
+                <pre id="saida">// O resultado da compilação aparecerá aqui...</pre>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Entrada -->
+    <!-- Input no terminal agora é gerado via JS -->
+
+    <script src="renderer.js"></script>
+</body>
+
+</html>
