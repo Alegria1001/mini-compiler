@@ -21,7 +21,7 @@ class Scope {
   lookup(name: string): Symbol | undefined {
     return this.symbols.get(name);
   }
-  //Remover escopo ao sair
+  //Remover o escopo ao sair
   remove(name: string): boolean {
     return this.symbols.delete(name);
   }
@@ -44,7 +44,6 @@ class errorSemantic extends Error {
 }
 
 class SemanticAnalyzer {
-  // private simbols: Record<string, Symbol> = {};
   private filename: string;
   private printCallback: (message: string) => void;
   private inputCallback: (prompt: string) => Promise<string>;
@@ -76,9 +75,6 @@ class SemanticAnalyzer {
     this.stackScopes.pop();
   }
 
-  // private symbolExistOutScope(name:string): boolean{
-  //   return this.stackScopes.some(scope => scope.lookup(name) !== undefined);
-  // }
   private symbolExistOutScope(name: string): boolean {
     for (let i = this.stackScopes.length - 2; i >= 0; i--) {
       if (this.stackScopes[i]!.lookup(name)) {
@@ -173,13 +169,13 @@ class SemanticAnalyzer {
       this.outScope();
     }
   }
-
+ 
   /**
-   * Função recursiva que visita cada nó da AST e executa a lógica correspondente.
+   * A função recursiva que visita cada nó da AST e executa a lógica correspondente.
    */
   private async visit(node: ASTNode): Promise<any> {
     switch (node.type) {
-      // Declaração de variável
+      // Declaração de uma variável
       case "VariableDeclaration": {
         let value: any = null;
 
@@ -187,7 +183,7 @@ class SemanticAnalyzer {
           value = await this.visit(node.value);
         }
 
-        // Valores padrão
+        // Valores padrões
         if (value === null) {
           switch (node.varType) {
             case "INTEIRO":
@@ -262,10 +258,6 @@ class SemanticAnalyzer {
             break;
         }
 
-        // this.simbols[node.id] = {
-        //   value,
-        //   type: node.varType,
-        // };
         this.currentScope().add({
           name: node.id, value, type: node.varType,
         });
@@ -274,7 +266,7 @@ class SemanticAnalyzer {
         break;
       }
 
-      // Atribuição de valor a variável
+      // Atribuição de valor a uma variável
       case "Assignment": {
         const symbol = this.lookupSymbol(node.id, node);
 
@@ -353,7 +345,7 @@ class SemanticAnalyzer {
         break;
       }
 
-      // Comando print para saida de dados
+      // Comando print para saída de dados
       case "PrintStatement": {
         let output = "";
 
@@ -466,7 +458,7 @@ class SemanticAnalyzer {
         break;
       }
 
-      // Comando Para repetição
+      // Comando para repetições
       case "WhileStatement": {
         let iterations = 0;
         const MAX_ITERATIONS = 10000;
@@ -551,10 +543,6 @@ class SemanticAnalyzer {
             if (iterations > MAX_ITERATIONS) {
               throw new Error("Loop PARA excedeu 10000 iterações.");
             }
-
-            // if (shouldContinue) {
-            //   continue;
-            // }
           }
         } finally {
           this.outScope();
@@ -596,7 +584,7 @@ class SemanticAnalyzer {
 
           // continue no do...while cai aqui
           if (shouldContinue) {
-            // não faz nada, apenas deixa cair para a condição
+            // não faz nada, apenas deixa cair para a condição que foi declarada no do...while
           }
         } while (await this.visit(node.condition));
 
@@ -692,30 +680,14 @@ class SemanticAnalyzer {
           );
         }
 
-        // if (cond) {
-        //   // SE verdadeiro
-        //   for (const stmt of node.trueBranch) {
-        //     await this.visit(stmt);
-        //   }
-        // } else if (node.falseBranch) {
-        //   // Se Falso
-        //   if (Array.isArray(node.falseBranch)) {
-        //     for (const stmt of node.falseBranch) {
-        //       await this.visit(stmt);
-        //     }
-        //   } else {
-        //     // recursivamente visita o IfStatement (SENAO SE)
-        //     await this.visit(node.falseBranch as ASTNode);
-        //   }
-        // }
         if (cond) {
-          this.enterScope();          // inicia o escopo local
+          this.enterScope();        
 
           for (const stmt of node.trueBranch) {
             await this.visit(stmt);
           }
 
-          this.outScope();            //fecha o escopo
+          this.outScope();           
         }
         else if (node.falseBranch) {
           this.enterScope();
@@ -837,6 +809,11 @@ class SemanticAnalyzer {
     if (props.borda) style += `border: ${props.borda}; `;
     if (props.margem) style += `margin: ${props.margem}; `;
     if (props.padding) style += `padding: ${props.padding}; `;
+    if (props.mostrar) style += `display: ${props.mostrar}; `;
+    if (props.direcao_flex) style += `flex-direction: ${props.direcao_flex}; `; 
+    if (props.justificar) style += `justify-content: ${props.justificar}; `;
+    if (props.alinhar) style += `align-items: ${props.alinhar}; `;
+    if (props.estilo_lista) style += `list-style: ${props.estilo_lista};`;
 
     if (node.tagName === "bloco") {
       style += "display: block; ";
@@ -863,8 +840,12 @@ class SemanticAnalyzer {
       texto: "p",
       botao: "button",
       imagem: "img",
-      caixa: "div",
       titulo: "h1",
+      subtitulo: "h2",
+      lista_ordenada: "ol",
+      lista_desordenada: "ul",
+      item_lista: "li",
+
     };
     return mapping[name] || name;
   }
@@ -872,14 +853,57 @@ class SemanticAnalyzer {
   private cssColor(color: string): string {
     const colors: { [key: string]: string } = {
       vermelho: "red",
-      azul: "blue",
-      verde: "green",
+      azul: "#2196F3",
+      verde: "#4CAF50",
       amarelo: "yellow",
       preto: "black",
       branco: "white",
       cinza: "gray",
       rosa: "pink",
       laranja: "orange",
+      rosa_claro: "#F8BBD0",
+      vermelho_escuro: "#B71C1C",
+      rosa_escuro: "#C51162",
+      roxo_claro: "#CE93D8",
+      roxo: "#9C27B0",
+      roxo_escuro: "#6A1B9A",
+      azul_claro: "#90CAF9",
+      azul_escuro: "#0D47A1",
+      verde_claro: "#81C784",
+      verde_escuro: "#1B5E20",
+      lima: "#CDDC39",
+      amarelo_claro:"#FFF59D",
+      amarelo_escuro: "#F9A825",
+      laranja_claro: "#FFE0B2",
+      laranja_escuro: "#E65100",
+      marrom: "#795548",
+      marrom_claro: "#A1887F",
+      marrom_escuro: "#3E2723",
+      azul_acizentado: "#607D8B",
+      azul_acizentado_claro: "#B0BEC5",
+      azul_acizentado_escuro: "#263238",
+      cinza_claro: "#BDBDBD",
+      cinza_escuro: "#212121",
+      amarelo_dourado: "#FFD700",
+      rosa_choque: "#FF69b4",
+      azul_marinho: "#000080",
+      verde_marinho: "#2e8b57",
+      violeta: "#ee82ee",
+      orquidia: "#DA70D6",
+      coral: "#FF7F50",
+      salmao: "#FA8072",
+      bege: "#F5F5DC",
+      marfim: "#FFFFF0",
+      lavanda: "#E6E6FA",
+      turquesa: "#40E0D0",
+      ciano: "#00FFFF",
+      bordo: "#B03060",
+      magenta: "#FF00FF",
+      neve: "#FFFAFA",
+      caqui: "#F0E68C",
+      verde_menta: "#3EB489",
+      azul_royal: "	#4169E1"
+
     };
     return colors[color] || color;
   }

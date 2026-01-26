@@ -84,6 +84,11 @@ class Parser {
       TokenType.PARA,
       TokenType.INSERIR,
       TokenType.RAIZ,
+      TokenType.CLASSE,
+      TokenType.FUNCAO,
+      TokenType.PUBLICO,
+      TokenType.PRIVADO,
+      TokenType.PROTEGIDO,
       TokenType.EXPOENTE,
       TokenType.CONTINUAR,
       TokenType.PARAR,
@@ -814,6 +819,8 @@ class Parser {
       coluna: calcToken.coluna,
     };
   }
+
+  
 
   private statement(): ASTNode {
     switch (this.currentToken.type) {
