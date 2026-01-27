@@ -733,53 +733,7 @@ class Lexer {
           };
         }
 
-        if (word === "CLASSE"){
-          return{
-            type: TokenType.CLASSE,
-            value: word,
-            linha: tokenInicioLinha,
-            coluna: tokenInicioColuna,
-          };
-        }
-
-        if (word === "FUNCAO"){
-          return{
-            type: TokenType.FUNCAO,
-            value: word,
-            linha: tokenInicioLinha,
-            coluna: tokenInicioColuna,
-          };
-        }
-        
-        if (word === "PUBLICO"){
-          return{
-            type: TokenType.PUBLICO,
-            value: word,
-            linha: tokenInicioLinha,
-            coluna: tokenInicioColuna,
-          };
-        }
-        
-        if (word === "PRIVADO"){
-          return{
-            type: TokenType.PRIVADO,
-            value: word,
-            linha: tokenInicioLinha,
-            coluna: tokenInicioColuna,
-          };
-        }
-
-        
-        if (word === "PROTEGIDO"){
-          return{
-            type: TokenType.PROTEGIDO,
-            value: word,
-            linha: tokenInicioLinha,
-            coluna: tokenInicioColuna,
-          };
-        }
-
-        // Outros operadores matemáticos
+         // Outros operadores matemáticos
         if (word === "RAIZ") {
           return {
             type: TokenType.RAIZ,

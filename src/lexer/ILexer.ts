@@ -85,12 +85,7 @@ enum TokenType {
   CONTINUAR = "CONTINUAR", // Palavra-chave 'CONTINUAR'
   PARAR = "PARAR", // Palavra-chave 'PARAR'
 
-  CLASSE = "CLASSE",
-  FUNCAO = "FUNCAO",
-  //POO
-  PUBLICO = "PUBLICO",
-  PRIVADO = "PRIVADO",
-  PROTEGIDO = "PROTEGIDO",
+
 }
 
 

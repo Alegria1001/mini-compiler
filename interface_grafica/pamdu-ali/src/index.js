@@ -48,7 +48,7 @@ app.on('window-all-closed', () => {
 const compilerApi = require('../../../dist/api');
 
 ipcMain.handle('compile-code', async (event, sourceCode) => {
-  console.log("Recebendo código para compilar...");
+  console.log("Recebendo código para compilar...", sourceCode);
 
   // Callback de input que será passado ao compilador
   const inputCallback = (prompt) => {
@@ -69,6 +69,7 @@ ipcMain.handle('compile-code', async (event, sourceCode) => {
 
   try {
     const result = await compilerApi.executeCode(sourceCode, inputCallback);
+    console.log(result)
     return result;
   } catch (error) {
     console.error("Erro na compilação:", error);

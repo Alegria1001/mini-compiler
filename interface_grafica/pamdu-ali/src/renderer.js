@@ -206,11 +206,12 @@ window.onload = () => {
     if (btnCompilar) {
         btnCompilar.addEventListener("click", async () => {
             const codigo = textArea.value;
+            console.log(codigo)
             saidaDiv.innerHTML = '<div class="log-info">Compilando...</div>';
 
             if (window.api && window.api.compile) {
                 const resultado = await window.api.compile(codigo);
-                saidaDiv.innerHTML = ""; // Limpa anterior
+                // saidaDiv.innerHTML = ""; // Limpa anterior
 
                 // Função auxiliar para limpar ANSI codes
                 const processText = (text) => {
