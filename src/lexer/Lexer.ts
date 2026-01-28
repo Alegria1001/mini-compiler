@@ -408,7 +408,8 @@ class Lexer {
 
         while (this.peek() !== '"' && this.position < this.text.length) {
           if (this.peek() === "\n") {
-            this.avancaLinha();
+            // Se encontrar nova linha, interrompemos para evitar consumir o código seguinte
+            break;
           } else {
             // Validação: string muito grande
             if (str.length >= TAMANHO_MAXIMO_PARA_STRING) {
@@ -641,7 +642,7 @@ class Lexer {
           };
         }
 
-        if (word === "VAZIA"){
+        if (word === "VAZIA") {
           return {
             type: TokenType.VAZIA,
             value: word,
@@ -743,7 +744,7 @@ class Lexer {
           };
         }
 
-         // Outros operadores matemáticos
+        // Outros operadores matemáticos
         if (word === "RAIZ") {
           return {
             type: TokenType.RAIZ,
@@ -797,7 +798,7 @@ class Lexer {
           };
         }
         if (word === "CASO") {
-          return{
+          return {
             type: TokenType.CASO,
             value: word,
             linha: tokenInicioLinha,
@@ -842,7 +843,9 @@ class Lexer {
           "VAZIA"
         ];
         for (const kw of keywords) {
-          if (word.startsWith(kw) && word !== kw) {
+          // Apenas valida se a palavra começa com a keyword E se a keyword tem pelo menos 3 caracteres
+          // Isso evita que "Expectativa" dê erro por causa de "E" ou "OU"
+          if (kw.length >= 3 && word.startsWith(kw) && word !== kw) {
             this.addError(
               `\x1b[31m========================================\x1b[0m
 \x1b[31m[ERRO] Palavra reservada inválida\x1b[0m
@@ -853,6 +856,8 @@ class Lexer {
   - \x1b[36mColuna:\x1b[0m \x1b[33m${tokenInicioColuna}\x1b[0m
   - \x1b[36mContexto:\x1b[0m A palavra '\x1b[33m${word}\x1b[0m' parece uma palavra reservada mal formada.`,
             );
+            // Se já achou um erro de mal formado, não precisa checar outras keywords
+            break;
           }
         }
 

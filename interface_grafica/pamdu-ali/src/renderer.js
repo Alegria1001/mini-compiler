@@ -231,14 +231,22 @@ window.onload = () => {
                 if (resultado.errors && resultado.errors.length > 0) {
                     currentErrorLines.clear();
 
+                    // Adiciona um separador se houver muitos erros
+                    if (resultado.errors.length > 1) {
+                        const countDiv = document.createElement("div");
+                        countDiv.className = "log-entry log-error";
+                        countDiv.innerHTML = `<strong>⚠️ Foram encontrados ${resultado.errors.length} erros:</strong>`;
+                        saidaDiv.appendChild(countDiv);
+                    }
+
                     resultado.errors.forEach(err => {
                         // Limpa códigos ANSI para processamento lógico
                         const cleanErr = err.replace(/\x1b\[[0-9;]*m/g, "");
 
                         const div = document.createElement("div");
-                        div.className = "log-entry log-error";
+                        div.className = "log-entry log-error"; // log-error já tem estilo de erro
                         // Exibe usando processText que já faz escape de HTML
-                        div.innerHTML = `<strong>⛔ ERRO:</strong>\n${processText(err)}`;
+                        div.innerHTML = processText(err);
                         saidaDiv.appendChild(div);
 
                         // Tenta extrair número da linha e coluna da string limpa
