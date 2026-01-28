@@ -475,34 +475,35 @@ class SemanticAnalyzer {
         let iterations = 0;
         const MAX_ITERATIONS = 10000;
 
-        if (node.type === "ForStatement") await this.visit(node.init);
+        // Inicialização
+        if (node.init) await this.visit(node.init);
 
-        do {
+        while (true) {
+          // Verifica condição antes de executar o corpo
+          if (node.condition) {
+            const cond = await this.visit(node.condition);
+            if (!cond) break;
+          }
+
           try {
             await this.executeBlock(node.body);
           } catch (signal) {
             if (signal instanceof BreakSignal) break;
             if (signal instanceof ContinueSignal) {
-              if (node.type === "ForStatement")
-                await this.visit(node.increment);
+              if (node.increment) await this.visit(node.increment);
               continue;
             }
             throw signal;
           }
 
-          if (node.type === "ForStatement") await this.visit(node.increment);
-
-          if (
-            node.type === "WhileStatement" ||
-            node.type === "DoWhileStatement"
-          ) {
-            if (!(await this.visit(node.condition))) break;
-          }
+          // Incremento
+          if (node.increment) await this.visit(node.increment);
 
           iterations++;
           if (iterations > MAX_ITERATIONS)
             throw new Error(`Loop ${node.type} excedeu 10000 iterações.`);
-        } while (node.type !== "ForStatement");
+        }
+
         break;
       }
 
