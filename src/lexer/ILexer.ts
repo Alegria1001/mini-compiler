@@ -86,6 +86,9 @@ enum TokenType {
   PARAR = "PARAR", // Palavra-chave 'PARAR'
 
 
+  // Funcões
+  FUNCAO = "FUNCAO", // Palavra-chave 'FUNCAO'
+  RETORNAR = "RETORNAR", // Palavra-chave 'RETORNAR'
 }
 
 

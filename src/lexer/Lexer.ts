@@ -752,6 +752,24 @@ class Lexer {
           };
         }
 
+        // 
+        if (word === "FUNCAO") {
+          return {
+            type: TokenType.FUNCAO,
+            value: word,
+            linha: tokenInicioLinha,
+            coluna: tokenInicioColuna,
+          };
+        }
+        if (word === "RETORNAR") {
+          return {
+            type: TokenType.RETORNAR,
+            value: word,
+            linha: tokenInicioLinha,
+            coluna: tokenInicioColuna,
+          };
+        }
+
         // Validação de palavras reservadas "erradas" (ex: VARc, REALx)
         const keywords = [
           "VAR",
@@ -780,7 +798,9 @@ class Lexer {
           "FUNCAO",
           "PUBLICO",
           "PRIVADO",
-          "PROTEGIDO"
+          "PROTEGIDO",
+          "RETORNAR",
+          "FUNCAO"
         ];
         for (const kw of keywords) {
           if (word.startsWith(kw) && word !== kw) {

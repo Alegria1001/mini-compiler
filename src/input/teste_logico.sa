@@ -12,7 +12,7 @@ SE (x > y OU y < z) {
 }
 
 SE (NAO(x > y)) {
-    EXIBIR("NAO funciona").
+    EXIBIR(" funciona").
 }
 
 SE (x + 5 < y E y - 5 > x) {
@@ -21,4 +21,9 @@ SE (x + 5 < y E y - 5 > x) {
 
 SE (x == 10 E (y == 20 OU z == 0)) {
     EXIBIR("Precedencia com parenteses funciona").
+}
+
+
+SE (NAO(FALSO)) {
+    EXIBIR("NAO, FUNCIONA COM EXPRESSOES UNARIAS").
 }

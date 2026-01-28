@@ -87,6 +87,9 @@ class Parser {
       TokenType.EXPOENTE,
       TokenType.CONTINUAR,
       TokenType.PARAR,
+      TokenType.E,
+      TokenType.OU,
+      TokenType.NAO,
     ];
     if (token.type !== TokenType.IDENTIFICADOR) {
       const errorMsg = reservedKeywords.includes(token.type)
@@ -137,6 +140,17 @@ class Parser {
       return {
         type: "UnaryExpression",
         operator: "-",
+        argument: this.factor(),
+        linha: token.linha,
+        coluna: token.coluna,
+      };
+    }
+    // Operador de negação lógica
+    if (token.type === TokenType.NAO) {
+      this.eat(TokenType.NAO);
+      return {
+        type: "UnaryLogicalExpression",
+        operator: "NAO",
         argument: this.factor(),
         linha: token.linha,
         coluna: token.coluna,
@@ -267,37 +281,139 @@ class Parser {
     return node;
   }
   // Expressão lógica
-  private logicalExpr(): ASTNode {
-    let left = this.factor();
-    if (
-      [
-        TokenType.IGUALDADE,
-        TokenType.DIFERENTE_DE,
-        TokenType.MAIOR_QUE,
-        TokenType.MENOR_QUE,
-        TokenType.MAIOR_OU_IGUAL,
-        TokenType.MENOR_OU_IGUAL,
-      ].includes(this.currentToken.type)
-    ) {
+private logicalExpr(): ASTNode {
+  let left = this.expr(); 
+
+  if (
+    [
+      TokenType.IGUALDADE,
+      TokenType.DIFERENTE_DE,
+      TokenType.MAIOR_QUE,
+      TokenType.MENOR_QUE,
+      TokenType.MAIOR_OU_IGUAL,
+      TokenType.MENOR_OU_IGUAL,
+    ].includes(this.currentToken.type)
+  ) {
+    const operatorToken = this.currentToken;
+    this.eat(operatorToken.type);
+    const right = this.expr(); 
+
+    return {
+      type: "LogicalExpression",
+      operator: operatorToken.value,
+      left,
+      right,
+      linha: operatorToken.linha,
+      coluna: operatorToken.coluna,
+    };
+  }
+
+  return left;
+}
+
+
+  private logicalAnd(): ASTNode {
+    let node = this.logicalExpr();
+
+    while (this.currentToken.type === TokenType.E) {
       const operatorToken = this.currentToken;
-      this.eat(operatorToken.type);
-      const right = this.factor();
-      return {
+      this.eat(TokenType.E);
+
+      node = {
         type: "LogicalExpression",
-        operator: operatorToken.value,
-        left,
-        right,
+        operator: "E",
+        left: node,
+        right: this.logicalExpr(),
         linha: operatorToken.linha,
         coluna: operatorToken.coluna,
       };
     }
-    return left;
+
+    return node;
   }
+
+  private logicalOr(): ASTNode {
+  let node = this.logicalAnd();
+
+  while (this.currentToken.type === TokenType.OU) {
+    const operatorToken = this.currentToken;
+    this.eat(TokenType.OU);
+
+    node = {
+      type: "LogicalExpression",
+      operator: "OU",
+      left: node,
+      right: this.logicalAnd(),
+      linha: operatorToken.linha,
+      coluna: operatorToken.coluna,
+    };
+  }
+
+  return node;
+}
+
+// Retornar um valor
+private parseReturnStatement(): ASTNode {
+  const token = this.currentToken;
+  this.eat(TokenType.RETORNAR);
+  let expression =null;
+  if(this.currentToken.type !== TokenType.PONTO){
+    // expression = this.expr();
+    expression = this.logicalOr();
+  }
+  this.eat(TokenType.PONTO);
+
+   return {
+    type: "ReturnStatement",
+    expression,
+    linha: token.linha,
+    coluna: token.coluna,
+  };
+}
+// Funcao
+
+private parseFunctionParameters(): string[] {
+  const params: string[] = [];
+  if (this.currentToken.type !== TokenType.PARENTESE_DIREITO) {
+    params.push(this.currentToken.value);
+    this.eat(TokenType.IDENTIFICADOR);
+    while (this.currentToken.type === TokenType.VIRGULA) {
+      this.eat(TokenType.VIRGULA);
+      params.push(this.currentToken.value);
+      this.eat(TokenType.IDENTIFICADOR);
+    }
+  }
+  return params;
+}
+
+private parseFunctionStatement(): ASTNode {
+  const token = this.currentToken;
+  this.eat(TokenType.FUNCAO);
+  this.eat(TokenType.IDENTIFICADOR);
+  this.eat(TokenType.PARENTESE_ESQUERDO);
+  const params = this.parseFunctionParameters();
+  this.eat(TokenType.PARENTESE_DIREITO);
+  this.eat(TokenType.CHAVE_ESQUERDA);
+  const body = this.parseBlock(TokenType.CHAVE_DIREITA);
+  this.eat(TokenType.CHAVE_DIREITA);
+
+  return {
+    type: "FunctionDeclaration",
+    name: token.value,
+    parameters: params,
+    body,
+    linha: token.linha,
+    coluna: token.coluna,
+  };
+}
+
+
 
   //   Análise de expressões entre parênteses
   private parenthesizedExpr(): ASTNode {
     this.eat(TokenType.PARENTESE_ESQUERDO);
-    const node = this.expr();
+    // const node = this.expr();
+    const node = this.logicalOr();
     this.eat(TokenType.PARENTESE_DIREITO);
     return node;
   }
@@ -372,8 +488,17 @@ class Parser {
     };
   }
 
-  private parseAssignment(expectDot: boolean = true, targetNode?: ASTNode): ASTNode {
-    const idToken = targetNode ? { linha: targetNode.linha, coluna: targetNode.coluna, value: (targetNode as any).id || (targetNode as any).name } : this.currentToken;
+  private parseAssignment(
+    expectDot: boolean = true,
+    targetNode?: ASTNode,
+  ): ASTNode {
+    const idToken = targetNode
+      ? {
+          linha: targetNode.linha,
+          coluna: targetNode.coluna,
+          value: (targetNode as any).id || (targetNode as any).name,
+        }
+      : this.currentToken;
 
     let target: ASTNode;
     if (targetNode) {
@@ -391,7 +516,10 @@ class Parser {
 
     let node: ASTNode;
 
-    if (operator === TokenType.INCREMENTO || operator === TokenType.DECREMENTO) {
+    if (
+      operator === TokenType.INCREMENTO ||
+      operator === TokenType.DECREMENTO
+    ) {
       this.eat(operator);
       node = {
         type: "UpdateStatement",
@@ -400,7 +528,10 @@ class Parser {
       };
       if (idToken.linha) node.linha = idToken.linha;
       if (idToken.coluna) node.coluna = idToken.coluna;
-    } else if (operator === TokenType.MAIS_IGUAL || operator === TokenType.MENOS_IGUAL) {
+    } else if (
+      operator === TokenType.MAIS_IGUAL ||
+      operator === TokenType.MENOS_IGUAL
+    ) {
       this.eat(operator);
       const value = this.expr();
       node = {
@@ -505,7 +636,10 @@ class Parser {
 
   private parseObjectLiteral(): ASTNode {
     const obj: { [key: string]: ASTNode } = {};
-    while (this.currentToken.type !== TokenType.CHAVE_DIREITA && this.currentToken.type !== TokenType.EOF) {
+    while (
+      this.currentToken.type !== TokenType.CHAVE_DIREITA &&
+      this.currentToken.type !== TokenType.EOF
+    ) {
       const keyToken = this.currentToken;
       const key = keyToken.value;
       this.eat(TokenType.IDENTIFICADOR);
@@ -559,7 +693,10 @@ class Parser {
     // Enquanto não encontrar </
     while (
       this.currentToken.type !== TokenType.EOF &&
-      !(this.currentToken.type === TokenType.MENOR_QUE && this.lexer.peekNextToken().type === TokenType.BARRA)
+      !(
+        this.currentToken.type === TokenType.MENOR_QUE &&
+        this.lexer.peekNextToken().type === TokenType.BARRA
+      )
     ) {
       if (this.currentToken.type === TokenType.TEXTO) {
         const textToken = this.currentToken;
@@ -603,7 +740,6 @@ class Parser {
     };
   }
 
-
   // Comandos de controle de fluxo
   // Comando PARAR
   private BreakStatement(): ASTNode {
@@ -630,14 +766,13 @@ class Parser {
     };
   }
 
-
   private seStatement(): ASTNode {
     // Consome o 'SE'
     this.eat(TokenType.SE);
 
     // Consome '(' e processa a condição
     this.eat(TokenType.PARENTESE_ESQUERDO);
-    const condition = this.logicalExpr();
+    const condition = this.logicalOr();
     this.eat(TokenType.PARENTESE_DIREITO);
 
     // Consome '{' e processa o bloco verdadeiro
@@ -745,7 +880,7 @@ class Parser {
     const enquantoToken = this.currentToken;
     this.eat(TokenType.ENQUANTO);
     this.eat(TokenType.PARENTESE_ESQUERDO);
-    const condition = this.logicalExpr();
+    const condition = this.logicalOr();
 
     this.eat(TokenType.PARENTESE_DIREITO);
     this.eat(TokenType.CHAVE_ESQUERDA);
@@ -782,7 +917,7 @@ class Parser {
 
     // Condição
     this.eat(TokenType.PONTO_E_VIRGULA); // separador
-    const condition = this.logicalExpr();
+    const condition = this.logicalOr();
 
     // Incremento
     this.eat(TokenType.PONTO_E_VIRGULA); // separador
@@ -895,8 +1030,6 @@ class Parser {
     };
   }
 
-  
-
   private statement(): ASTNode {
     switch (this.currentToken.type) {
       case TokenType.VAR:
@@ -911,7 +1044,15 @@ class Parser {
         const factorNode = this.factor();
         const nextType = this.currentToken.type;
 
-        if ([TokenType.ATRIBUICAO, TokenType.INCREMENTO, TokenType.DECREMENTO, TokenType.MAIS_IGUAL, TokenType.MENOS_IGUAL].includes(nextType)) {
+        if (
+          [
+            TokenType.ATRIBUICAO,
+            TokenType.INCREMENTO,
+            TokenType.DECREMENTO,
+            TokenType.MAIS_IGUAL,
+            TokenType.MENOS_IGUAL,
+          ].includes(nextType)
+        ) {
           return this.parseAssignment(true, factorNode);
         }
 
@@ -939,9 +1080,14 @@ class Parser {
       case TokenType.CONTINUAR:
         return this.parseContinueStatement();
 
+        case TokenType.RETORNAR:
+        return this.parseReturnStatement();
       case TokenType.RAIZ:
       case TokenType.EXPOENTE:
         return this.CalcStatement();
+
+      case TokenType.FUNCAO:
+        return this.parseFunctionStatement();
       default:
         throw new Error(
           this.formatError(

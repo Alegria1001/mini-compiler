@@ -114,7 +114,7 @@ async function executeFile(filename: string) {
   }
 }
 
-do {
+// do {
   console.clear(); // Limpa a tela antes de mostrar o menu
   executarMenu();
-} while (continuar)
+// } while (continuar)
